@@ -8,28 +8,44 @@ import { DeepDiveFeatures } from './components/DeepDiveFeatures';
 import { FAQ } from './components/FAQ';
 import { Footer } from './components/Footer';
 import { ExitIntentModal } from './components/ExitIntentModal';
+import { AuthModal } from './components/AuthModal';
 import { useExitIntent } from './hooks/useExitIntent';
 import { ArrowRight } from 'lucide-react';
 
 export default function App() {
   const [showExitModal, setShowExitModal] = useState(false);
+  const [authModal, setAuthModal] = useState<{ isOpen: boolean; mode: 'login' | 'signup' }>({
+    isOpen: false,
+    mode: 'signup'
+  });
 
   // Trigger modal on mouse leave (desktop)
-  useExitIntent(() => setShowExitModal(true));
+  useExitIntent(() => {
+    // Only show exit intent if auth modal is not open
+    if (!authModal.isOpen) {
+      setShowExitModal(true);
+    }
+  });
 
-  const scrollToCTA = () => {
-    // In a real app, this might scroll. For demo, we trigger the modal or just log.
-    console.log("CTA Clicked");
-    setShowExitModal(true);
+  const openAuth = (mode: 'login' | 'signup') => {
+    setShowExitModal(false); // Close exit modal if open
+    setAuthModal({ isOpen: true, mode });
+  };
+
+  const closeAuth = () => {
+    setAuthModal({ ...authModal, isOpen: false });
   };
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans selection:bg-purple-200 selection:text-purple-900">
       <UrgencyBanner />
-      <Navbar onCTAClick={scrollToCTA} />
+      <Navbar 
+        onLoginClick={() => openAuth('login')} 
+        onSignupClick={() => openAuth('signup')} 
+      />
       
       <main>
-        <Hero onCTAClick={scrollToCTA} />
+        <Hero onSignupClick={() => openAuth('signup')} />
         <ProblemAgitation />
         <ComparisonTable />
         <DeepDiveFeatures />
@@ -49,7 +65,7 @@ export default function App() {
               Junte-se a 1.200+ usuários que já saíram do caos das planilhas.
             </p>
             <button 
-              onClick={scrollToCTA} 
+              onClick={() => openAuth('signup')}
               className="px-10 py-5 bg-white text-purple-900 rounded-full font-bold text-xl shadow-2xl hover:scale-105 transition-transform flex items-center justify-center gap-3 mx-auto"
             >
               Começar Grátis Agora <ArrowRight className="w-5 h-5" />
@@ -62,7 +78,17 @@ export default function App() {
       </main>
 
       <Footer />
-      <ExitIntentModal isOpen={showExitModal} onClose={() => setShowExitModal(false)} />
+      <ExitIntentModal 
+        isOpen={showExitModal} 
+        onClose={() => setShowExitModal(false)}
+        onSignupClick={() => openAuth('signup')}
+      />
+      
+      <AuthModal 
+        isOpen={authModal.isOpen} 
+        initialMode={authModal.mode} 
+        onClose={closeAuth} 
+      />
     </div>
   );
 }

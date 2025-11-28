@@ -5,9 +5,10 @@ import { BRAND } from '../constants';
 interface ExitIntentModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSignupClick: () => void;
 }
 
-export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
+export function ExitIntentModal({ isOpen, onClose, onSignupClick }: ExitIntentModalProps) {
   if (!isOpen) return null;
 
   return (
@@ -41,8 +42,7 @@ export function ExitIntentModal({ isOpen, onClose }: ExitIntentModalProps) {
 
           <button 
             onClick={() => {
-              window.location.href = '#signup';
-              onClose();
+              onSignupClick();
             }} 
             className="w-full py-3.5 rounded-full font-bold text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
             style={{ background: `linear-gradient(90deg, ${BRAND.colors.primary}, ${BRAND.colors.secondary})` }}

@@ -1,10 +1,10 @@
 export const BRAND = {
-  name: 'FinanPro',
+  name: 'Abacron',
   colors: {
-    primary: '#8B5CF6', // Violet-500
-    secondary: '#EC4899', // Pink-500
-    dark: '#0F172A', // Slate-900
-    light: '#F8FAFC', // Slate-50
-    success: '#10B981', // Emerald-500
+    primary: '#3A0CA3', // Roxo imperial
+    secondary: '#F72585', // Rosa vibrante
+    dark: '#0F172A',
+    light: '#F8F9FA', // Branco elegante
+    success: '#10B981',
   }
 };

@@ -12,7 +12,7 @@ export function ComparisonTable() {
   ];
 
   return (
-    <section id="comparacao" className="py-20 bg-slate-50">
+    <section id="preco" className="py-20 bg-slate-50">
       <div className="max-w-5xl mx-auto px-4">
         <h2 className="text-3xl font-bold text-center text-slate-900 mb-12">
           Compare e decida

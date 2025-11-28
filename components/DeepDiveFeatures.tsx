@@ -4,7 +4,7 @@ import { BRAND } from '../constants';
 
 export function DeepDiveFeatures() {
   return (
-    <section id="recursos" className="py-24 bg-white overflow-hidden">
+    <section id="funcionalidades" className="py-24 bg-white overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-32">
         {/* Passo 1 */}
         <div className="grid md:grid-cols-2 gap-16 items-center">
