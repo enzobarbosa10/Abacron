@@ -1,20 +1,19 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🔷 Abacron
 
-# Run and deploy your AI Studio app
+Abacron é uma aplicação web moderna desenvolvida com **React + TypeScript + Vite**, criada para ser escalável, performática e fácil de manter.  
+O objetivo do projeto é fornecer uma base sólida para construção de aplicações rápidas, seguras e bem estruturadas.
 
-This contains everything you need to run your app locally.
+---
 
-View your app in AI Studio: https://ai.studio/apps/drive/1_JcG-_nh44oCyUwKxktaDXcf5AnPnUZ7
+## 🚀 Tecnologias Utilizadas
 
-## Run Locally
+- **React** – interface declarativa e componentizada  
+- **TypeScript** – tipagem estática para maior segurança  
+- **Vite** – dev server ultra-rápido e bundler moderno  
+- **ESLint + Prettier** – padrão de código e formatação  
+- **GitHub Actions** (opcional) – CI/CD para validação automática
 
-**Prerequisites:**  Node.js
+---
 
+## 📁 Estrutura do Projeto
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
