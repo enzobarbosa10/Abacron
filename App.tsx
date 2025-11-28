@@ -5,6 +5,7 @@ import { Hero } from './components/Hero';
 import { ProblemAgitation } from './components/ProblemAgitation';
 import { ComparisonTable } from './components/ComparisonTable';
 import { DeepDiveFeatures } from './components/DeepDiveFeatures';
+import { Pricing } from './components/Pricing';
 import { FAQ } from './components/FAQ';
 import { Footer } from './components/Footer';
 import { ExitIntentModal } from './components/ExitIntentModal';
@@ -47,8 +48,9 @@ export default function App() {
       <main>
         <Hero onSignupClick={() => openAuth('signup')} />
         <ProblemAgitation />
-        <ComparisonTable />
         <DeepDiveFeatures />
+        <Pricing onSignupClick={() => openAuth('signup')} />
+        <ComparisonTable />
         <FAQ />
 
         {/* Final CTA Section */}

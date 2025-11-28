@@ -12,10 +12,10 @@ export function ComparisonTable() {
   ];
 
   return (
-    <section id="preco" className="py-20 bg-slate-50">
+    <section className="py-20 bg-white border-t border-gray-100">
       <div className="max-w-5xl mx-auto px-4">
         <h2 className="text-3xl font-bold text-center text-slate-900 mb-12">
-          Compare e decida
+          Por que o {BRAND.name} é diferente?
         </h2>
         <div className="bg-white rounded-3xl shadow-lg overflow-hidden border border-gray-100">
           <div className="overflow-x-auto">
@@ -32,8 +32,8 @@ export function ComparisonTable() {
                     <div className="text-xs font-normal">Manual</div>
                   </th>
                   <th className="py-6 px-6 text-center text-slate-400 font-medium w-1/4">
-                    <div>Apps Pagos</div>
-                    <div className="text-xs font-normal">R$ 29/mês</div>
+                    <div>Mobills / Organizze</div>
+                    <div className="text-xs font-normal">~ R$ 19/mês</div>
                   </th>
                 </tr>
               </thead>
@@ -67,7 +67,7 @@ export function ComparisonTable() {
           </div>
         </div>
         <p className="text-center mt-8 text-slate-500 text-sm">
-          * Economize cerca de <strong className="text-purple-600">R$ 350,00/ano</strong> escolhendo o {BRAND.name} ao invés de apps pagos.
+          * Economize cerca de <strong className="text-purple-600">R$ 240,00/ano</strong> escolhendo o {BRAND.name} (MVP) ao invés de concorrentes pagos.
         </p>
       </div>
     </section>

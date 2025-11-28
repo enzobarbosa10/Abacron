@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { X, Mail, Lock, User, ArrowRight, Phone, Calendar } from 'lucide-react';
 import { BRAND } from '../constants';
 
 interface AuthModalProps {
@@ -88,23 +88,41 @@ export function AuthModal({ isOpen, initialMode, onClose }: AuthModalProps) {
         </div>
 
         {/* Form */}
-        <div className="p-8 pt-6 overflow-y-auto">
+        <div className="p-8 pt-6 overflow-y-auto custom-scrollbar">
           <form onSubmit={handleSubmit} className="space-y-4">
+            
+            {/* Campos exclusivos de Cadastro (Topo) */}
             {mode === 'signup' && (
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase ml-1">Nome Completo</label>
-                <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input 
-                    type="text" 
-                    placeholder="Seu nome"
-                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition bg-gray-50 focus:bg-white"
-                    required
-                  />
+              <>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase ml-1">Nome Completo</label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input 
+                      type="text" 
+                      placeholder="Seu nome"
+                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition bg-gray-50 focus:bg-white"
+                      required
+                    />
+                  </div>
                 </div>
-              </div>
+
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-500 uppercase ml-1">Telefone</label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <input 
+                      type="tel" 
+                      placeholder="(11) 99999-9999"
+                      className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition bg-gray-50 focus:bg-white"
+                      required
+                    />
+                  </div>
+                </div>
+              </>
             )}
 
+            {/* Email (Comum) */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-500 uppercase ml-1">E-mail</label>
               <div className="relative">
@@ -118,6 +136,22 @@ export function AuthModal({ isOpen, initialMode, onClose }: AuthModalProps) {
               </div>
             </div>
 
+            {/* Campos exclusivos de Cadastro (Meio) */}
+            {mode === 'signup' && (
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-slate-500 uppercase ml-1">Data de Nascimento</label>
+                <div className="relative">
+                  <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <input 
+                    type="date" 
+                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition bg-gray-50 focus:bg-white text-gray-600"
+                    required
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Senha (Comum) */}
             <div className="space-y-1">
               <label className="text-xs font-bold text-slate-500 uppercase ml-1">Senha</label>
               <div className="relative">

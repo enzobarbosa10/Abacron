@@ -76,18 +76,18 @@ export function Navbar({ onLoginClick, onSignupClick }: NavbarProps) {
             <div className="h-6 w-px bg-slate-200"></div>
 
             {/* Auth Buttons */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-3">
               <a 
                 href="#entrar"
                 onClick={(e) => handleScroll(e, '#entrar')}
-                className="text-sm font-bold text-slate-600 hover:text-purple-700 transition cursor-pointer"
+                className="px-5 py-2.5 rounded-full text-sm font-bold text-slate-700 hover:bg-purple-50 hover:text-purple-700 transition-colors cursor-pointer"
               >
                 Entrar
               </a>
               <button 
                 onClick={onSignupClick} 
-                className="px-6 py-2.5 rounded-full text-sm font-bold text-white shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all flex items-center gap-2"
-                style={{ backgroundColor: BRAND.colors.primary }}
+                className="px-6 py-2.5 rounded-full text-sm font-bold text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                style={{ background: `linear-gradient(90deg, ${BRAND.colors.primary}, ${BRAND.colors.secondary})` }}
               >
                 Criar Conta <ArrowRight className="w-4 h-4" />
               </button>
@@ -117,25 +117,28 @@ export function Navbar({ onLoginClick, onSignupClick }: NavbarProps) {
                 {item.label}
               </a>
             ))}
-            <div className="h-px w-full bg-slate-100 my-4"></div>
-            <a 
-              href="#entrar"
-              onClick={(e) => handleScroll(e, '#entrar')}
-              className="w-full text-left text-lg font-bold text-slate-600 hover:text-purple-600 px-4 py-3 rounded-xl hover:bg-purple-50 transition flex items-center justify-between cursor-pointer"
-            >
-              Entrar
-              <span className="text-xs font-normal text-slate-400">Já tenho conta</span>
-            </a>
-            <button 
-              onClick={() => {
-                onSignupClick();
-                setMobileMenuOpen(false);
-              }} 
-              className="w-full py-4 rounded-xl font-bold text-white mt-2 shadow-lg active:scale-95 transition-transform"
-              style={{ backgroundColor: BRAND.colors.primary }}
-            >
-              Criar Conta Grátis
-            </button>
+            
+            <div className="h-px w-full bg-slate-100 my-2"></div>
+            
+            <div className="flex flex-col gap-3 pt-2">
+              <a 
+                href="#entrar"
+                onClick={(e) => handleScroll(e, '#entrar')}
+                className="w-full py-3 rounded-xl font-bold text-slate-700 border border-slate-200 text-center hover:bg-purple-50 hover:border-purple-200 transition cursor-pointer"
+              >
+                Entrar
+              </a>
+              <button 
+                onClick={() => {
+                  onSignupClick();
+                  setMobileMenuOpen(false);
+                }} 
+                className="w-full py-3 rounded-xl font-bold text-white shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
+                style={{ background: `linear-gradient(90deg, ${BRAND.colors.primary}, ${BRAND.colors.secondary})` }}
+              >
+                Criar Conta Grátis <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       )}

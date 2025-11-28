@@ -1,5 +1,5 @@
 import React from 'react';
-import { Upload, Sparkles, Lock, Zap } from 'lucide-react';
+import { Upload, Sparkles, Lock, Zap, AlertTriangle } from 'lucide-react';
 import { BRAND } from '../constants';
 
 export function DeepDiveFeatures() {
@@ -17,15 +17,23 @@ export function DeepDiveFeatures() {
               <span className="text-purple-500">sem esforço manual.</span>
             </h3>
             <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-              Diga adeus à digitação. Exporte o arquivo do seu banco e arraste para o {BRAND.name}. Processamos os dados instantaneamente para gerar seus relatórios.
+              Diga adeus à digitação. Exporte o arquivo do seu banco e arraste para o {BRAND.name}. Processamos os dados instantaneamente.
             </p>
             <div className="flex flex-wrap gap-3 mb-6">
               {['Nubank', 'Inter', 'Itaú', 'Bradesco', 'Santander'].map(bank => (
                 <span key={bank} className="px-3 py-1 bg-gray-100 rounded-full text-xs font-medium text-gray-500 border border-gray-200">{bank}</span>
               ))}
             </div>
-            <div className="flex items-center gap-2 text-sm text-slate-500">
-               <span className="font-semibold text-purple-600">Formatos aceitos (MVP):</span> CSV, TXT e PDF
+            <div className="space-y-2">
+               <div className="flex items-center gap-2 text-sm text-slate-700">
+                  <span className="font-semibold text-purple-600">Formatos aceitos (MVP):</span> 
+                  <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded text-xs font-bold border border-green-100">CSV</span>
+                  <span className="bg-green-50 text-green-700 px-2 py-0.5 rounded text-xs font-bold border border-green-100">TXT</span>
+               </div>
+               <div className="flex items-start gap-2 text-xs text-slate-500 bg-yellow-50 p-2 rounded border border-yellow-100">
+                  <AlertTriangle className="w-4 h-4 text-yellow-500 shrink-0" />
+                  <span><strong>Atenção PDF:</strong> Aceitamos apenas PDFs estruturados (texto selecionável). Scans/Imagens (OCR) não suportados nesta versão.</span>
+               </div>
             </div>
           </div>
           <div className="relative">
@@ -34,7 +42,7 @@ export function DeepDiveFeatures() {
               <div className="border-2 border-dashed border-purple-200 rounded-xl bg-purple-50 h-64 flex flex-col items-center justify-center text-center p-8">
                 <Upload className="w-12 h-12 text-purple-400 mb-4" />
                 <p className="font-medium text-purple-900">Arraste seu extrato aqui</p>
-                <p className="text-sm text-purple-600 mt-2">Suporta CSV, TXT, PDF</p>
+                <p className="text-sm text-purple-600 mt-2">.CSV, .TXT ou .PDF (Texto)</p>
               </div>
             </div>
           </div>
@@ -76,14 +84,14 @@ export function DeepDiveFeatures() {
             </div>
             <h3 className="text-3xl font-bold text-slate-900 mb-4">
               Categorização Inteligente <br />
-              <span className="text-pink-500">sem configuração.</span>
+              <span className="text-pink-500">com fallback automático.</span>
             </h3>
             <p className="text-lg text-slate-600 mb-6 leading-relaxed">
-              Nosso motor de IA analisa descrições (ex: "Posto Shell" ou "Drogasil") e categoriza automaticamente como Transporte ou Saúde. Economize horas de ajustes manuais.
+              Nosso motor de IA analisa descrições (ex: "Posto Shell" ou "Drogasil") e categoriza automaticamente. Se tiver dúvida, movemos para "Outros" para sua revisão.
             </p>
             <ul className="space-y-2">
-              <li className="flex items-center text-gray-700 font-medium"><Sparkles className="w-4 h-4 text-pink-500 mr-2"/> 75%+ de precisão automática (MVP)</li>
-              <li className="flex items-center text-gray-700 font-medium"><Sparkles className="w-4 h-4 text-pink-500 mr-2"/> Aprende com suas correções</li>
+              <li className="flex items-center text-gray-700 font-medium"><Sparkles className="w-4 h-4 text-pink-500 mr-2"/> 75%+ de precisão no MVP</li>
+              <li className="flex items-center text-gray-700 font-medium"><Sparkles className="w-4 h-4 text-pink-500 mr-2"/> Aprendizado contínuo com edições</li>
             </ul>
           </div>
         </div>
@@ -109,7 +117,7 @@ export function DeepDiveFeatures() {
                 <Zap className="w-4 h-4 text-green-500 mr-2"/> Zero risco de vazamento de dados
               </li>
               <li className="flex items-center text-gray-700 font-medium">
-                <Zap className="w-4 h-4 text-green-500 mr-2"/> Funciona até offline após carregar
+                <Zap className="w-4 h-4 text-green-500 mr-2"/> Funciona offline após carregar
               </li>
             </ul>
           </div>
