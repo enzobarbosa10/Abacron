@@ -111,7 +111,7 @@ export function Navbar({ onLoginClick, onSignupClick }: NavbarProps) {
               <a 
                 key={item.label} 
                 href={item.href} 
-                className="block text-lg font-medium text-slate-600 hover:text-purple-600 hover:bg-purple-50 px-4 py-3 rounded-xl transition"
+                className="block text-lg font-medium text-slate-600 hover:text-purple-600 hover:bg-purple-50 px-4 py-3 rounded-xl transition cursor-pointer"
                 onClick={(e) => handleScroll(e, item.href)}
               >
                 {item.label}
