@@ -5,11 +5,13 @@ import { Hero } from './components/Hero';
 import { ProblemAgitation } from './components/ProblemAgitation';
 import { ComparisonTable } from './components/ComparisonTable';
 import { DeepDiveFeatures } from './components/DeepDiveFeatures';
+import { MagicEditor } from './components/MagicEditor';
 import { Pricing } from './components/Pricing';
 import { FAQ } from './components/FAQ';
 import { Footer } from './components/Footer';
 import { ExitIntentModal } from './components/ExitIntentModal';
 import { AuthModal } from './components/AuthModal';
+import { AboutUs } from './components/AboutUs';
 import { useExitIntent } from './hooks/useExitIntent';
 import { ArrowRight } from 'lucide-react';
 
@@ -48,7 +50,12 @@ export default function App() {
       <main>
         <Hero onSignupClick={() => openAuth('signup')} />
         <ProblemAgitation />
+        <AboutUs />
         <DeepDiveFeatures />
+        
+        {/* Nova Funcionalidade de Edição de Imagem */}
+        <MagicEditor />
+
         <Pricing onSignupClick={() => openAuth('signup')} />
         <ComparisonTable />
         <FAQ />
