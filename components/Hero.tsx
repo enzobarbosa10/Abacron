@@ -38,13 +38,13 @@ export function Hero({ onSignupClick }: HeroProps) {
         <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
           <button
             onClick={onSignupClick}
-            className="px-8 py-4 rounded-full text-lg font-bold text-white shadow-xl hover:shadow-2xl hover:scale-105 transition-all flex items-center justify-center gap-2"
+            className="px-8 py-4 rounded-full text-lg font-bold text-white shadow-xl shadow-purple-500/20 hover:shadow-purple-500/40 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
             style={{ background: `linear-gradient(90deg, ${BRAND.colors.primary}, ${BRAND.colors.secondary})` }}
           >
             <Upload className="w-5 h-5" />
             Começar Gratuitamente
           </button>
-          <button className="px-8 py-4 rounded-full text-lg font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-gray-50 transition-all flex items-center justify-center gap-2">
+          <button className="px-8 py-4 rounded-full text-lg font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-gray-50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2">
             <PieChart className="w-5 h-5 text-purple-600" />
             Ver Demonstração
           </button>

@@ -68,7 +68,7 @@ export default function App() {
             </p>
             <button 
               onClick={() => openAuth('signup')}
-              className="px-10 py-5 bg-white text-purple-900 rounded-full font-bold text-xl shadow-2xl hover:scale-105 transition-transform flex items-center justify-center gap-3 mx-auto"
+              className="px-10 py-5 bg-white text-purple-900 rounded-full font-bold text-xl shadow-2xl shadow-purple-900/30 hover:shadow-purple-900/50 hover:scale-105 transition-transform duration-300 flex items-center justify-center gap-3 mx-auto"
             >
               Começar Grátis Agora <ArrowRight className="w-5 h-5" />
             </button>

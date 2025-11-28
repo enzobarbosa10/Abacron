@@ -86,7 +86,7 @@ export function Navbar({ onLoginClick, onSignupClick }: NavbarProps) {
               </a>
               <button 
                 onClick={onSignupClick} 
-                className="px-6 py-2.5 rounded-full text-sm font-bold text-white shadow-lg shadow-purple-500/30 hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300 flex items-center gap-2"
+                className="px-6 py-2.5 rounded-full text-sm font-bold text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/50 hover:scale-105 transition-all duration-300 flex items-center gap-2"
                 style={{ background: `linear-gradient(90deg, ${BRAND.colors.primary}, ${BRAND.colors.secondary})` }}
               >
                 Criar Conta <ArrowRight className="w-4 h-4" />
@@ -133,7 +133,7 @@ export function Navbar({ onLoginClick, onSignupClick }: NavbarProps) {
                   onSignupClick();
                   setMobileMenuOpen(false);
                 }} 
-                className="w-full py-3 rounded-xl font-bold text-white shadow-lg active:scale-95 transition-transform flex items-center justify-center gap-2"
+                className="w-full py-3 rounded-xl font-bold text-white shadow-lg shadow-purple-500/20 active:scale-95 transition-transform flex items-center justify-center gap-2"
                 style={{ background: `linear-gradient(90deg, ${BRAND.colors.primary}, ${BRAND.colors.secondary})` }}
               >
                 Criar Conta Grátis <ArrowRight className="w-4 h-4" />

@@ -44,7 +44,7 @@ export function ExitIntentModal({ isOpen, onClose, onSignupClick }: ExitIntentMo
             onClick={() => {
               onSignupClick();
             }} 
-            className="w-full py-3.5 rounded-full font-bold text-white shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all"
+            className="w-full py-3.5 rounded-full font-bold text-white shadow-lg shadow-purple-500/25 hover:shadow-purple-500/50 hover:scale-[1.02] transition-all duration-300"
             style={{ background: `linear-gradient(90deg, ${BRAND.colors.primary}, ${BRAND.colors.secondary})` }}
           >
             Quero Minha Conta Grátis

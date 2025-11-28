@@ -173,7 +173,7 @@ export function AuthModal({ isOpen, initialMode, onClose }: AuthModalProps) {
             <button 
               type="submit"
               disabled={isLoading}
-              className="w-full py-4 rounded-xl font-bold text-white shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-2 mt-4"
+              className="w-full py-4 rounded-xl font-bold text-white shadow-lg shadow-purple-500/20 hover:shadow-purple-500/40 hover:scale-[1.02] active:scale-95 transition-all duration-300 flex items-center justify-center gap-2 mt-4"
               style={{ background: `linear-gradient(90deg, ${BRAND.colors.primary}, ${BRAND.colors.secondary})` }}
             >
               {isLoading ? (
