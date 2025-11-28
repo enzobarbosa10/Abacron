@@ -32,7 +32,7 @@ export function Hero({ onSignupClick }: HeroProps) {
         </h1>
 
         <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-600 mb-10 leading-relaxed">
-          Pare de lutar com planilhas. Tenha visibilidade completa dos seus gastos em <strong className="text-slate-800">menos de 30 segundos</strong> usando nossa Inteligência Artificial.
+          Chega de planilhas manuais. Tenha clareza total sobre seu dinheiro em <strong className="text-slate-800">menos de 30 segundos</strong> com nossa organização automática via IA.
         </p>
 
         <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">

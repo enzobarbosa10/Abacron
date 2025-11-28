@@ -6,9 +6,10 @@ interface AuthModalProps {
   isOpen: boolean;
   initialMode: 'login' | 'signup';
   onClose: () => void;
+  onSuccess?: () => void; // Novo callback
 }
 
-export function AuthModal({ isOpen, initialMode, onClose }: AuthModalProps) {
+export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModalProps) {
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,8 +25,12 @@ export function AuthModal({ isOpen, initialMode, onClose }: AuthModalProps) {
     // Simulação de delay de rede
     setTimeout(() => {
       setIsLoading(false);
-      alert(mode === 'login' ? 'Login realizado com sucesso! (Demo)' : 'Conta criada com sucesso! (Demo)');
-      onClose();
+      // Se tiver callback de sucesso (via App.tsx), chama ele
+      if (onSuccess) {
+         onSuccess();
+      } else {
+         onClose();
+      }
     }, 1500);
   };
 

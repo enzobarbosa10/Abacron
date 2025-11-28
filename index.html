@@ -25,15 +25,45 @@
         from { opacity: 0; }
         to { opacity: 1; }
       }
+      /* Custom Scrollbar */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
     </style>
-  <script type="importmap">
+    <script>
+      // Polyfill process for browser environment to prevent ReferenceError in client-side code
+      // We merge with existing process if defined by bundler, or create new one
+      window.process = window.process || {};
+      window.process.env = window.process.env || {};
+      window.process.env.NODE_ENV = 'development';
+    </script>
+    <script type="importmap">
 {
   "imports": {
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "react-dom": "https://esm.sh/react-dom@18.2.0",
+    "lucide-react": "https://esm.sh/lucide-react@0.344.0",
+    "@google/genai": "https://esm.sh/@google/genai@0.1.1",
+    "recharts": "https://esm.sh/recharts@2.12.7?external=react,react-dom",
+    "prop-types": "https://esm.sh/prop-types@15.8.1",
+    "papaparse": "https://esm.sh/papaparse@5.4.1",
+    "clsx": "https://esm.sh/clsx@2.1.0",
+    "tailwind-merge": "https://esm.sh/tailwind-merge@2.2.1",
     "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/",
-    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0"
+    "react/": "https://aistudiocdn.com/react@^19.2.0/"
   }
 }
 </script>

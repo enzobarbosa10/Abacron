@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UrgencyBanner } from './components/UrgencyBanner';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
@@ -12,60 +12,119 @@ import { Footer } from './components/Footer';
 import { ExitIntentModal } from './components/ExitIntentModal';
 import { AuthModal } from './components/AuthModal';
 import { AboutUs } from './components/AboutUs';
+import { Onboarding } from './components/Onboarding';
+import { Dashboard } from './components/Dashboard';
+import { UploadArea } from './components/UploadArea';
 import { useExitIntent } from './hooks/useExitIntent';
 import { ArrowRight } from 'lucide-react';
+import { AppView, UserProfile, Transaction } from './types';
+import { BRAND } from './constants';
 
 export default function App() {
+  // State Navigation
+  const [currentView, setCurrentView] = useState<AppView>('LANDING');
+  
+  // App Data
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [showUploadModal, setShowUploadModal] = useState(false);
+
+  // Modals (Landing)
   const [showExitModal, setShowExitModal] = useState(false);
   const [authModal, setAuthModal] = useState<{ isOpen: boolean; mode: 'login' | 'signup' }>({
     isOpen: false,
     mode: 'signup'
   });
 
-  // Trigger modal on mouse leave (desktop)
+  // Persistência Mockada
+  useEffect(() => {
+    const savedUser = localStorage.getItem('abacron_user');
+    const savedTrans = localStorage.getItem('abacron_trans');
+    if (savedUser) setUserProfile(JSON.parse(savedUser));
+    if (savedTrans) setTransactions(JSON.parse(savedTrans));
+  }, []);
+
+  // Exit Intent logic (only on landing)
   useExitIntent(() => {
-    // Only show exit intent if auth modal is not open
-    if (!authModal.isOpen) {
+    if (currentView === 'LANDING' && !authModal.isOpen) {
       setShowExitModal(true);
     }
   });
 
-  const openAuth = (mode: 'login' | 'signup') => {
-    setShowExitModal(false); // Close exit modal if open
-    setAuthModal({ isOpen: true, mode });
-  };
-
-  const closeAuth = () => {
+  const handleAuthSuccess = () => {
     setAuthModal({ ...authModal, isOpen: false });
+    // Se já tem perfil, vai pro Dashboard, senão Onboarding
+    if (userProfile) {
+      setCurrentView('DASHBOARD');
+    } else {
+      setCurrentView('ONBOARDING');
+    }
   };
 
+  const handleOnboardingComplete = (profile: UserProfile) => {
+    setUserProfile(profile);
+    localStorage.setItem('abacron_user', JSON.stringify(profile));
+    setCurrentView('DASHBOARD');
+  };
+
+  const handleUploadSuccess = (newTransactions: Transaction[]) => {
+    const updated = [...transactions, ...newTransactions];
+    setTransactions(updated);
+    localStorage.setItem('abacron_trans', JSON.stringify(updated));
+    setShowUploadModal(false);
+  };
+
+  const handleLogout = () => {
+    // Para demo, apenas volta para landing, não limpa dados
+    setCurrentView('LANDING');
+  };
+
+  // --- RENDER VIEWS ---
+
+  if (currentView === 'ONBOARDING') {
+    return <Onboarding onComplete={handleOnboardingComplete} />;
+  }
+
+  if (currentView === 'DASHBOARD' && userProfile) {
+    return (
+      <>
+        <Dashboard 
+          user={userProfile} 
+          transactions={transactions} 
+          onUploadRequest={() => setShowUploadModal(true)}
+          onLogout={handleLogout}
+        />
+        {showUploadModal && (
+          <UploadArea 
+            onUploadSuccess={handleUploadSuccess} 
+            onCancel={() => setShowUploadModal(false)} 
+          />
+        )}
+      </>
+    );
+  }
+
+  // DEFAULT: LANDING PAGE
   return (
     <div className="min-h-screen bg-slate-50 font-sans selection:bg-purple-200 selection:text-purple-900">
       <UrgencyBanner />
       <Navbar 
-        onLoginClick={() => openAuth('login')} 
-        onSignupClick={() => openAuth('signup')} 
+        onLoginClick={() => setAuthModal({ isOpen: true, mode: 'login' })} 
+        onSignupClick={() => setAuthModal({ isOpen: true, mode: 'signup' })} 
       />
       
       <main>
-        <Hero onSignupClick={() => openAuth('signup')} />
+        <Hero onSignupClick={() => setAuthModal({ isOpen: true, mode: 'signup' })} />
         <ProblemAgitation />
         <AboutUs />
         <DeepDiveFeatures />
-        
-        {/* Nova Funcionalidade de Edição de Imagem */}
         <MagicEditor />
-
-        <Pricing onSignupClick={() => openAuth('signup')} />
+        <Pricing onSignupClick={() => setAuthModal({ isOpen: true, mode: 'signup' })} />
         <ComparisonTable />
         <FAQ />
 
-        {/* Final CTA Section */}
         <section className="py-24 bg-gradient-to-br from-violet-900 to-purple-900 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20 bg-noise"></div> 
-          {/* Note: bg-noise assumes a plugin or custom class, simulating with standard opacity if needed, 
-              but relying on background color here for standard tailwind */}
-          
+          <div className="absolute inset-0 opacity-20 bg-noise"></div>
           <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
             <h2 className="text-3xl md:text-5xl font-extrabold text-white mb-6">
               Pare de adiar sua organização financeira.
@@ -74,7 +133,7 @@ export default function App() {
               Junte-se a 1.200+ usuários que já saíram do caos das planilhas.
             </p>
             <button 
-              onClick={() => openAuth('signup')}
+              onClick={() => setAuthModal({ isOpen: true, mode: 'signup' })}
               className="px-10 py-5 bg-white text-purple-900 rounded-full font-bold text-xl shadow-2xl shadow-purple-900/30 hover:shadow-purple-900/50 hover:scale-105 transition-transform duration-300 flex items-center justify-center gap-3 mx-auto"
             >
               Começar Grátis Agora <ArrowRight className="w-5 h-5" />
@@ -90,13 +149,17 @@ export default function App() {
       <ExitIntentModal 
         isOpen={showExitModal} 
         onClose={() => setShowExitModal(false)}
-        onSignupClick={() => openAuth('signup')}
+        onSignupClick={() => {
+           setShowExitModal(false);
+           setAuthModal({ isOpen: true, mode: 'signup' });
+        }}
       />
       
       <AuthModal 
         isOpen={authModal.isOpen} 
         initialMode={authModal.mode} 
-        onClose={closeAuth} 
+        onClose={() => setAuthModal({ ...authModal, isOpen: false })}
+        onSuccess={handleAuthSuccess} // Novo prop para disparar login
       />
     </div>
   );
