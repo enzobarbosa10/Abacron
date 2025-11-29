@@ -6,6 +6,7 @@ export interface Transaction {
   type: 'income' | 'expense';
   category: string;
   bank?: string;
+  notes?: string;
 }
 
 export interface UserProfile {

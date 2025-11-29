@@ -15,10 +15,14 @@ import { AboutUs } from './components/AboutUs';
 import { Onboarding } from './components/Onboarding';
 import { Dashboard } from './components/Dashboard';
 import { UploadArea } from './components/UploadArea';
+import { CookieBanner } from './components/CookieBanner';
 import { useExitIntent } from './hooks/useExitIntent';
 import { ArrowRight } from 'lucide-react';
 import { AppView, UserProfile, Transaction } from './types';
 import { BRAND } from './constants';
+import { supabase } from './services/supabase';
+import { buscarPerfil, atualizarMeuPerfil } from './services/profiles';
+import { buscarTransacoes, adicionarTransacoesEmLote } from './services/transactions';
 
 export default function App() {
   // State Navigation
@@ -28,6 +32,7 @@ export default function App() {
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Modals (Landing)
   const [showExitModal, setShowExitModal] = useState(false);
@@ -36,50 +41,144 @@ export default function App() {
     mode: 'signup'
   });
 
-  // Persistência Mockada
+  // Carregar dados do usuário
+  const carregarDadosUsuario = async (userId: string) => {
+    setIsLoading(true);
+    try {
+      console.log('Carregando dados para usuário:', userId);
+
+      // Buscar perfil
+      const { data: perfil, success: perfilSuccess } = await buscarPerfil(userId);
+      
+      // Buscar transações (com tratamento de erro isolado)
+      try {
+        const { data: transacoes } = await buscarTransacoes();
+        if (transacoes) {
+          setTransactions(transacoes);
+        }
+      } catch (tError) {
+        console.warn('Erro ao buscar transações (pode ser tabela inexistente):', tError);
+      }
+
+      if (perfilSuccess && perfil) {
+        console.log('Perfil encontrado. Redirecionando para Dashboard.');
+        setUserProfile(perfil as unknown as UserProfile); 
+        setCurrentView('DASHBOARD');
+      } else {
+        console.log('Perfil não encontrado ou erro. Redirecionando para Onboarding.');
+        // Se não achou perfil, assume que é novo usuário
+        setCurrentView('ONBOARDING');
+      }
+
+    } catch (error) {
+      console.error('Erro crítico ao carregar dados:', error);
+      // Em caso de erro crítico, tentar ir para Onboarding para não travar
+      setCurrentView('ONBOARDING');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Monitorar autenticação
   useEffect(() => {
-    const savedUser = localStorage.getItem('abacron_user');
-    const savedTrans = localStorage.getItem('abacron_trans');
-    if (savedUser) setUserProfile(JSON.parse(savedUser));
-    if (savedTrans) setTransactions(JSON.parse(savedTrans));
+    // Verificar sessão atual
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        carregarDadosUsuario(session.user.id);
+      } else {
+        setIsLoading(false);
+      }
+    });
+
+    // Escutar mudanças na autenticação
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        carregarDadosUsuario(session.user.id);
+        setAuthModal(prev => ({ ...prev, isOpen: false }));
+      } else {
+        setUserProfile(null);
+        setTransactions([]);
+        setCurrentView('LANDING');
+        setIsLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Exit Intent logic (only on landing)
   useExitIntent(() => {
-    if (currentView === 'LANDING' && !authModal.isOpen) {
+    if (currentView === 'LANDING' && !authModal.isOpen && !userProfile) {
       setShowExitModal(true);
     }
   });
 
   const handleAuthSuccess = () => {
     setAuthModal({ ...authModal, isOpen: false });
-    // Se já tem perfil, vai pro Dashboard, senão Onboarding
-    if (userProfile) {
-      setCurrentView('DASHBOARD');
-    } else {
-      setCurrentView('ONBOARDING');
+  };
+
+  const handleOnboardingComplete = async (profile: UserProfile) => {
+    setUserProfile(profile);
+    setCurrentView('DASHBOARD');
+    await atualizarMeuPerfil(profile);
+  };
+
+  const handleUploadSuccess = async (newTransactions: Transaction[]) => {
+    // Remover IDs temporários antes de enviar para o Supabase (que gera UUIDs)
+    const transacoesParaSalvar = newTransactions.map(({ id, ...rest }) => rest);
+
+    const { success, data } = await adicionarTransacoesEmLote(transacoesParaSalvar);
+    
+    if (success && data) {
+      setTransactions(prev => [...prev, ...data]);
+      setShowUploadModal(false);
     }
   };
 
-  const handleOnboardingComplete = (profile: UserProfile) => {
-    setUserProfile(profile);
-    localStorage.setItem('abacron_user', JSON.stringify(profile));
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+  };
+
+  // Modo Demo - Entrar sem cadastro
+  const handleDemoMode = () => {
+    // Criar perfil de demonstração
+    const demoProfile: UserProfile = {
+      name: 'Usuário Demo',
+      monthlyIncome: 5000,
+      goal: 'control',
+      riskProfile: 'moderate',
+      topCategories: ['Alimentação', 'Transporte', 'Lazer']
+    };
+
+    // Criar transações de exemplo
+    const demoTransactions: Transaction[] = [
+      { id: 'demo-1', date: '2025-11-25', description: 'Salário', amount: 5000, type: 'income', category: 'Salário', bank: 'Nubank' },
+      { id: 'demo-2', date: '2025-11-24', description: 'Mercado Extra', amount: 450, type: 'expense', category: 'Alimentação', bank: 'Nubank' },
+      { id: 'demo-3', date: '2025-11-23', description: 'Uber', amount: 35, type: 'expense', category: 'Transporte', bank: 'Nubank' },
+      { id: 'demo-4', date: '2025-11-22', description: 'Netflix', amount: 55, type: 'expense', category: 'Streaming', bank: 'Nubank' },
+      { id: 'demo-5', date: '2025-11-21', description: 'Aluguel', amount: 1500, type: 'expense', category: 'Moradia', bank: 'Itaú' },
+      { id: 'demo-6', date: '2025-11-20', description: 'Freelance Design', amount: 800, type: 'income', category: 'Freelance', bank: 'Nubank' },
+      { id: 'demo-7', date: '2025-11-19', description: 'Restaurante', amount: 120, type: 'expense', category: 'Alimentação', bank: 'Nubank' },
+      { id: 'demo-8', date: '2025-11-18', description: 'Gasolina', amount: 200, type: 'expense', category: 'Transporte', bank: 'Itaú' },
+      { id: 'demo-9', date: '2025-11-17', description: 'Cinema', amount: 60, type: 'expense', category: 'Lazer', bank: 'Nubank' },
+      { id: 'demo-10', date: '2025-11-16', description: 'Farmácia', amount: 85, type: 'expense', category: 'Saúde', bank: 'Itaú' },
+    ];
+
+    setUserProfile(demoProfile);
+    setTransactions(demoTransactions);
+    setAuthModal({ isOpen: false, mode: 'login' });
     setCurrentView('DASHBOARD');
   };
 
-  const handleUploadSuccess = (newTransactions: Transaction[]) => {
-    const updated = [...transactions, ...newTransactions];
-    setTransactions(updated);
-    localStorage.setItem('abacron_trans', JSON.stringify(updated));
-    setShowUploadModal(false);
-  };
-
-  const handleLogout = () => {
-    // Para demo, apenas volta para landing, não limpa dados
-    setCurrentView('LANDING');
-  };
-
   // --- RENDER VIEWS ---
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+      </div>
+    );
+  }
 
   if (currentView === 'ONBOARDING') {
     return <Onboarding onComplete={handleOnboardingComplete} />;
@@ -114,7 +213,10 @@ export default function App() {
       />
       
       <main>
-        <Hero onSignupClick={() => setAuthModal({ isOpen: true, mode: 'signup' })} />
+        <Hero 
+          onSignupClick={() => setAuthModal({ isOpen: true, mode: 'signup' })} 
+          onDemoClick={handleDemoMode}
+        />
         <ProblemAgitation />
         <AboutUs />
         <DeepDiveFeatures />
@@ -159,8 +261,11 @@ export default function App() {
         isOpen={authModal.isOpen} 
         initialMode={authModal.mode} 
         onClose={() => setAuthModal({ ...authModal, isOpen: false })}
-        onSuccess={handleAuthSuccess} // Novo prop para disparar login
+        onSuccess={handleAuthSuccess}
+        onDemoMode={handleDemoMode}
       />
+      
+      <CookieBanner />
     </div>
   );
 }

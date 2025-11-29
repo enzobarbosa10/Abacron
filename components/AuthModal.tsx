@@ -1,37 +1,75 @@
 import React, { useState, useEffect } from 'react';
-import { X, Mail, Lock, User, ArrowRight, Phone, Calendar } from 'lucide-react';
+import { X, Mail, Lock, User, ArrowRight, Phone, Calendar, AlertCircle } from 'lucide-react';
 import { BRAND } from '../constants';
+import { fazerLogin, cadastrarUsuario } from '../services/auth';
 
 interface AuthModalProps {
   isOpen: boolean;
   initialMode: 'login' | 'signup';
   onClose: () => void;
-  onSuccess?: () => void; // Novo callback
+  onSuccess?: () => void;
+  onDemoMode?: () => void; // Entrar sem cadastro
 }
 
-export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModalProps) {
+export function AuthModal({ isOpen, initialMode, onClose, onSuccess, onDemoMode }: AuthModalProps) {
   const [mode, setMode] = useState<'login' | 'signup'>(initialMode);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    birthDate: ''
+  });
 
   useEffect(() => {
     setMode(initialMode);
+    setError(null);
+    setFormData({ name: '', email: '', password: '', phone: '', birthDate: '' });
   }, [initialMode, isOpen]);
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (error) setError(null);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // Simulação de delay de rede
-    setTimeout(() => {
-      setIsLoading(false);
-      // Se tiver callback de sucesso (via App.tsx), chama ele
-      if (onSuccess) {
-         onSuccess();
+    setError(null);
+
+    try {
+      let result;
+      
+      if (mode === 'login') {
+        result = await fazerLogin(formData.email, formData.password);
       } else {
-         onClose();
+        // Para cadastro
+        result = await cadastrarUsuario(formData.email, formData.password, formData.name);
       }
-    }, 1500);
+
+      if (result.success) {
+        // Limpar form
+        setFormData({ name: '', email: '', password: '', phone: '', birthDate: '' });
+        
+        if (onSuccess) {
+           onSuccess();
+        } else {
+           onClose();
+        }
+      } else {
+        setError(result.error || 'Ocorreu um erro ao processar sua solicitação.');
+      }
+    } catch (err) {
+      console.error(err);
+      setError('Erro de conexão. Verifique sua internet.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -96,6 +134,14 @@ export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModal
         <div className="p-8 pt-6 overflow-y-auto custom-scrollbar">
           <form onSubmit={handleSubmit} className="space-y-4">
             
+            {/* Error Message */}
+            {error && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2 animate-fade-in">
+                <AlertCircle className="w-4 h-4 shrink-0" />
+                {error}
+              </div>
+            )}
+
             {/* Campos exclusivos de Cadastro (Topo) */}
             {mode === 'signup' && (
               <>
@@ -105,6 +151,9 @@ export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModal
                     <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input 
                       type="text" 
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
                       placeholder="Seu nome"
                       className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition bg-gray-50 focus:bg-white"
                       required
@@ -118,6 +167,9 @@ export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModal
                     <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                     <input 
                       type="tel" 
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
                       placeholder="(11) 99999-9999"
                       className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition bg-gray-50 focus:bg-white"
                       required
@@ -134,6 +186,9 @@ export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModal
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input 
                   type="email" 
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
                   placeholder="seu@email.com"
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition bg-gray-50 focus:bg-white"
                   required
@@ -149,6 +204,9 @@ export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModal
                   <Calendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                   <input 
                     type="date" 
+                    name="birthDate"
+                    value={formData.birthDate}
+                    onChange={handleChange}
                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition bg-gray-50 focus:bg-white text-gray-600"
                     required
                   />
@@ -163,6 +221,9 @@ export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModal
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
                 <input 
                   type="password" 
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   placeholder="••••••••"
                   className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition bg-gray-50 focus:bg-white"
                   required
@@ -222,6 +283,20 @@ export function AuthModal({ isOpen, initialMode, onClose, onSuccess }: AuthModal
               {mode === 'login' ? 'Cadastre-se' : 'Entrar'}
             </button>
           </div>
+
+          {/* Botão Modo Demo */}
+          {onDemoMode && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <button
+                type="button"
+                onClick={onDemoMode}
+                className="w-full py-3 rounded-xl font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all flex items-center justify-center gap-2"
+              >
+                🚀 Entrar sem cadastro (Demo)
+              </button>
+              <p className="text-xs text-gray-400 text-center mt-2">Explore o app com dados de exemplo</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

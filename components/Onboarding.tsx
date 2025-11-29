@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { ArrowRight, Check, Target, Shield, TrendingUp, Wallet } from 'lucide-react';
+import { ArrowRight, Check, Target, Shield, TrendingUp, Wallet, Activity } from 'lucide-react';
 import { UserProfile } from '../types';
-import { BRAND } from '../constants';
 
 interface OnboardingProps {
   onComplete: (profile: UserProfile) => void;
@@ -11,14 +10,27 @@ export function Onboarding({ onComplete }: OnboardingProps) {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<Partial<UserProfile>>({
     name: '',
+    monthlyIncome: 0,
     topCategories: []
   });
 
   const nextStep = () => setStep(s => s + 1);
+  const prevStep = () => setStep(s => s - 1);
 
   const handleFinish = () => {
-    if (formData.name && formData.monthlyIncome && formData.goal && formData.riskProfile) {
+    if (formData.name && formData.goal && formData.riskProfile) {
       onComplete(formData as UserProfile);
+    }
+  };
+
+  const toggleCategory = (cat: string) => {
+    const current = formData.topCategories || [];
+    if (current.includes(cat)) {
+      setFormData({ ...formData, topCategories: current.filter(c => c !== cat) });
+    } else {
+      if (current.length < 3) {
+        setFormData({ ...formData, topCategories: [...current, cat] });
+      }
     }
   };
 
@@ -29,7 +41,7 @@ export function Onboarding({ onComplete }: OnboardingProps) {
         <div className="h-2 bg-slate-100 w-full">
           <div 
             className="h-full bg-purple-600 transition-all duration-500 ease-out"
-            style={{ width: `${(step / 4) * 100}%` }}
+            style={{ width: `${(step / 5) * 100}%` }}
           />
         </div>
 
@@ -65,10 +77,46 @@ export function Onboarding({ onComplete }: OnboardingProps) {
             </div>
           )}
 
-          {/* STEP 2: Income & Goal */}
+          {/* STEP 2: Income Range */}
           {step === 2 && (
             <div className="animate-fade-in space-y-8">
-              <h2 className="text-2xl font-bold text-slate-900">Qual seu objetivo principal hoje, {formData.name}?</h2>
+              <h2 className="text-2xl font-bold text-slate-900">Qual sua faixa de renda mensal aproximada?</h2>
+              <p className="text-slate-500">Isso nos ajuda a calibrar as metas iniciais.</p>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {[
+                  { val: 2000, label: 'Até R$ 2.000' },
+                  { val: 5000, label: 'R$ 2.000 - R$ 5.000' },
+                  { val: 10000, label: 'R$ 5.000 - R$ 10.000' },
+                  { val: 20000, label: 'Acima de R$ 10.000' },
+                ].map((opt) => (
+                  <button
+                    key={opt.val}
+                    onClick={() => {
+                        setFormData({...formData, monthlyIncome: opt.val});
+                        nextStep();
+                    }}
+                    className={`p-4 rounded-xl border-2 text-left font-bold transition-all ${
+                      formData.monthlyIncome === opt.val 
+                        ? 'border-purple-600 bg-purple-50 text-purple-900' 
+                        : 'border-slate-100 hover:border-purple-200 hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex justify-between pt-4">
+                 <button onClick={prevStep} className="text-slate-400 font-medium hover:text-slate-600">Voltar</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 3: Goal */}
+          {step === 3 && (
+            <div className="animate-fade-in space-y-8">
+              <h2 className="text-2xl font-bold text-slate-900">Qual seu objetivo principal hoje?</h2>
               
               <div className="grid gap-4">
                 {[
@@ -78,7 +126,10 @@ export function Onboarding({ onComplete }: OnboardingProps) {
                 ].map((opt) => (
                   <button
                     key={opt.id}
-                    onClick={() => setFormData({...formData, goal: opt.id as any})}
+                    onClick={() => {
+                        setFormData({...formData, goal: opt.id as any});
+                        nextStep();
+                    }}
                     className={`p-6 rounded-2xl border-2 text-left flex items-center gap-4 transition-all ${
                       formData.goal === opt.id 
                         ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-600' 
@@ -97,80 +148,80 @@ export function Onboarding({ onComplete }: OnboardingProps) {
               </div>
 
               <div className="flex justify-between pt-4">
-                 <button onClick={() => setStep(1)} className="text-slate-400 font-medium hover:text-slate-600">Voltar</button>
-                 <button 
-                  onClick={nextStep}
-                  disabled={!formData.goal}
-                  className="px-8 py-3 bg-purple-600 text-white rounded-xl font-bold shadow-lg hover:bg-purple-700 disabled:opacity-50 flex items-center gap-2 transition-all"
-                >
-                  Próximo <ArrowRight className="w-5 h-5" />
-                </button>
+                 <button onClick={prevStep} className="text-slate-400 font-medium hover:text-slate-600">Voltar</button>
               </div>
             </div>
           )}
 
-          {/* STEP 3: Income Range */}
-          {step === 3 && (
-            <div className="animate-fade-in space-y-8">
-               <h2 className="text-2xl font-bold text-slate-900">Qual sua renda mensal aproximada?</h2>
-               <p className="text-slate-500">Isso nos ajuda a calibrar os gráficos e metas.</p>
-
-               <div className="space-y-4">
-                 <input 
-                    type="number" 
-                    placeholder="R$ 0,00"
-                    className="w-full text-4xl font-bold border-b-2 border-slate-200 py-4 focus:border-purple-600 outline-none bg-transparent placeholder:text-slate-300 text-slate-800"
-                    onChange={(e) => setFormData({...formData, monthlyIncome: Number(e.target.value)})}
-                 />
-               </div>
-
-               <div className="flex justify-between pt-8">
-                 <button onClick={() => setStep(2)} className="text-slate-400 font-medium hover:text-slate-600">Voltar</button>
-                 <button 
-                  onClick={nextStep}
-                  disabled={!formData.monthlyIncome}
-                  className="px-8 py-3 bg-purple-600 text-white rounded-xl font-bold shadow-lg hover:bg-purple-700 disabled:opacity-50 flex items-center gap-2 transition-all"
-                >
-                  Próximo <ArrowRight className="w-5 h-5" />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 4: Risk Profile & Finish */}
+          {/* STEP 4: Risk Profile */}
           {step === 4 && (
             <div className="animate-fade-in space-y-8">
-              <h2 className="text-2xl font-bold text-slate-900">Para finalizar, qual seu estilo financeiro?</h2>
+              <h2 className="text-2xl font-bold text-slate-900">Como você lida com seu dinheiro?</h2>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                 {[
-                   { id: 'conservative', label: 'Conservador', emoji: '🛡️' },
-                   { id: 'moderate', label: 'Moderado', emoji: '⚖️' },
-                   { id: 'aggressive', label: 'Arrojado', emoji: '🚀' },
-                 ].map((opt) => (
-                   <button
+              <div className="grid gap-4">
+                {[
+                  { id: 'conservative', label: 'Conservador', icon: Shield, desc: 'Prefiro segurança, evito riscos.' },
+                  { id: 'moderate', label: 'Moderado', icon: Activity, desc: 'Busco equilíbrio entre segurança e retorno.' },
+                  { id: 'aggressive', label: 'Arrojado', icon: TrendingUp, desc: 'Aceito riscos para ter maiores retornos.' },
+                ].map((opt) => (
+                  <button
                     key={opt.id}
-                    onClick={() => setFormData({...formData, riskProfile: opt.id as any})}
-                    className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-2 transition-all h-40 ${
+                    onClick={() => {
+                        setFormData({...formData, riskProfile: opt.id as any});
+                        nextStep();
+                    }}
+                    className={`p-6 rounded-2xl border-2 text-left flex items-center gap-4 transition-all ${
                       formData.riskProfile === opt.id 
-                        ? 'border-purple-600 bg-purple-50' 
+                        ? 'border-purple-600 bg-purple-50 ring-1 ring-purple-600' 
                         : 'border-slate-100 hover:border-purple-200 hover:bg-slate-50'
                     }`}
-                   >
-                     <span className="text-4xl">{opt.emoji}</span>
-                     <span className={`font-bold ${formData.riskProfile === opt.id ? 'text-purple-900' : 'text-slate-700'}`}>{opt.label}</span>
-                   </button>
-                 ))}
+                  >
+                    <div className={`p-3 rounded-full ${formData.riskProfile === opt.id ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                      <opt.icon className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h3 className={`font-bold text-lg ${formData.riskProfile === opt.id ? 'text-purple-900' : 'text-slate-900'}`}>{opt.label}</h3>
+                      <p className="text-slate-500 text-sm">{opt.desc}</p>
+                    </div>
+                  </button>
+                ))}
               </div>
 
-              <div className="flex justify-between pt-8">
-                 <button onClick={() => setStep(3)} className="text-slate-400 font-medium hover:text-slate-600">Voltar</button>
+              <div className="flex justify-between pt-4">
+                 <button onClick={prevStep} className="text-slate-400 font-medium hover:text-slate-600">Voltar</button>
+              </div>
+            </div>
+          )}
+
+          {/* STEP 5: Top Expenses */}
+          {step === 5 && (
+            <div className="animate-fade-in space-y-8">
+              <h2 className="text-2xl font-bold text-slate-900">Quais são seus maiores gastos?</h2>
+              <p className="text-slate-500">Selecione até 3 categorias principais.</p>
+              
+              <div className="grid grid-cols-2 gap-3">
+                {['Alimentação', 'Transporte', 'Moradia', 'Lazer', 'Saúde', 'Educação', 'Compras', 'Viagem'].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => toggleCategory(cat)}
+                    className={`p-3 rounded-xl border-2 text-center font-medium transition-all ${
+                      formData.topCategories?.includes(cat)
+                        ? 'border-purple-600 bg-purple-50 text-purple-900' 
+                        : 'border-slate-100 hover:border-purple-200 hover:bg-slate-50 text-slate-600'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex justify-between pt-8 items-center">
+                 <button onClick={prevStep} className="text-slate-400 font-medium hover:text-slate-600">Voltar</button>
                  <button 
                   onClick={handleFinish}
-                  disabled={!formData.riskProfile}
-                  className="px-8 py-3 bg-green-500 text-white rounded-xl font-bold shadow-lg hover:bg-green-600 disabled:opacity-50 flex items-center gap-2 transition-all"
+                  className="px-8 py-3 bg-purple-600 text-white rounded-xl font-bold shadow-lg hover:bg-purple-700 flex items-center gap-2 transition-all"
                 >
-                  <Check className="w-5 h-5" /> Criar Dashboard
+                  Finalizar Perfil <Check className="w-5 h-5" />
                 </button>
               </div>
             </div>

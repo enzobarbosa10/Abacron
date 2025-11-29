@@ -4,9 +4,10 @@ import { BRAND } from '../constants';
 
 interface HeroProps {
   onSignupClick: () => void;
+  onDemoClick?: () => void;
 }
 
-export function Hero({ onSignupClick }: HeroProps) {
+export function Hero({ onSignupClick, onDemoClick }: HeroProps) {
   return (
     <section id="entrar" className="relative pt-32 pb-20 overflow-hidden">
       {/* Background Blobs */}
@@ -44,7 +45,10 @@ export function Hero({ onSignupClick }: HeroProps) {
             <Upload className="w-5 h-5" />
             Começar Gratuitamente
           </button>
-          <button className="px-8 py-4 rounded-full text-lg font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-gray-50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2">
+          <button 
+            onClick={onDemoClick}
+            className="px-8 py-4 rounded-full text-lg font-bold text-slate-700 bg-white border border-slate-200 shadow-sm hover:bg-gray-50 hover:scale-105 transition-all duration-300 flex items-center justify-center gap-2"
+          >
             <PieChart className="w-5 h-5 text-purple-600" />
             Ver Demonstração
           </button>

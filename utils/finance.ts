@@ -91,3 +91,33 @@ export const formatCurrency = (value: number) => {
     currency: 'BRL'
   }).format(value);
 };
+
+export function exportToCSV(transactions: Transaction[], filename = 'transacoes.csv') {
+  // Converter dados para formato CSV
+  const headers = ['Data', 'Descrição', 'Valor', 'Tipo', 'Categoria', 'Banco', 'Notas'];
+  const csvContent = [
+    headers.join(','),
+    ...transactions.map(t => [
+      t.date,
+      `"${t.description.replace(/"/g, '""')}"`, // Escapar aspas
+      t.amount.toFixed(2),
+      t.type === 'income' ? 'Entrada' : 'Saída',
+      t.category,
+      t.bank || '',
+      `"${(t.notes || '').replace(/"/g, '""')}"`
+    ].join(','))
+  ].join('\n');
+
+  // Criar Blob e Link de Download
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  if (link.download !== undefined) {
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+}

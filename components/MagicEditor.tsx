@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Upload, Wand2, Image as ImageIcon, Download, X, Loader2 } from 'lucide-react';
 import { BRAND } from '../constants';
 
@@ -31,7 +31,7 @@ export function MagicEditor() {
     setIsLoading(true);
     try {
       // Initialize Gemini Client
-      const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      const ai = new GoogleGenerativeAI(process.env.VITE_GOOGLE_API_KEY || '');
       
       // Extract base64 data (remove "data:image/png;base64," prefix)
       const base64Data = originalImage.split(',')[1];

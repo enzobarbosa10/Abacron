@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChartLine, Menu, X, ArrowRight } from 'lucide-react';
+import { LineChart, Menu, X, ArrowRight } from 'lucide-react';
 import { BRAND } from '../constants';
 
 interface NavbarProps {
@@ -54,7 +54,7 @@ export function Navbar({ onLoginClick, onSignupClick }: NavbarProps) {
           {/* Logo */}
           <a href="#" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="flex items-center space-x-2 group">
             <div className="bg-purple-600 p-1.5 rounded-lg group-hover:bg-purple-700 transition-colors">
-              <ChartLine className="w-6 h-6 text-white" />
+              <LineChart className="w-6 h-6 text-white" />
             </div>
             <span className="text-xl font-bold tracking-tight text-slate-900 group-hover:text-purple-900 transition-colors">{BRAND.name}</span>
           </a>
